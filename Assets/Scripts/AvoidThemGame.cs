@@ -36,24 +36,24 @@ public sealed class AvoidThemGame : MonoBehaviour
     [SerializeField] private string enemyTextureFolderName = "Enemies";
     [SerializeField] private Color hazardFallbackColor = new Color(1f, 0.31f, 0.2f);
 
-    private readonly List<Rigidbody> hazards = new List<Rigidbody>();
-    private readonly List<Texture2D> enemyTextures = new List<Texture2D>();
-    private Camera gameCamera;
-    private Transform cursorTransform;
-    private PhysicsMaterial bounceMaterial;
-    private Text scoreText;
-    private GameObject startPanel;
-    private GameObject gameOverPanel;
-    private Text gameOverText;
-    private GameState state;
-    private float elapsed;
-    private float bestScore;
-    private float spawnTimer;
-    private Plane cursorPlane;
-    private Font uiFont;
-    private Vector2 lastPointerPosition;
+    readonly List<Rigidbody> hazards = new List<Rigidbody>();
+    readonly List<Texture2D> enemyTextures = new List<Texture2D>();
+    Camera gameCamera;
+    Transform cursorTransform;
+    PhysicsMaterial bounceMaterial;
+    Text scoreText;
+    GameObject startPanel;
+    GameObject gameOverPanel;
+    Text gameOverText;
+    GameState state;
+    float elapsed;
+    float bestScore;
+    float spawnTimer;
+    Plane cursorPlane;
+    Font uiFont;
+    Vector2 lastPointerPosition;
 
-    private void Awake()
+    void Awake()
     {
         cursorPlane = new Plane(Vector3.up, Vector3.zero);
         uiFont = ResolveFont();
@@ -67,12 +67,12 @@ public sealed class AvoidThemGame : MonoBehaviour
         ConfigureCursor(true);
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         ConfigureCursor(false);
     }
 
-    private void Update()
+    void Update()
     {
         UpdateCursorPosition();
         HandleMenuInput();
@@ -89,7 +89,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         CheckLoseCondition();
     }
 
-    private void ConfigureCamera()
+    void ConfigureCamera()
     {
         gameCamera = Camera.main;
 
@@ -116,7 +116,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         gameCamera.backgroundColor = new Color(0.06f, 0.09f, 0.12f);
     }
 
-    private void BuildArena()
+    void BuildArena()
     {
         bounceMaterial = new PhysicsMaterial("ArenaBounce")
         {
@@ -152,7 +152,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void ApplyFloorVisuals(Renderer floorRenderer)
+    void ApplyFloorVisuals(Renderer floorRenderer)
     {
         var floorMaterial = floorRenderer.material;
         if (TryGetBackgroundTexture(out var backgroundTexture))
@@ -167,7 +167,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         floorMaterial.color = floorFallbackColor;
     }
 
-    private bool TryGetBackgroundTexture(out Texture2D texture)
+    bool TryGetBackgroundTexture(out Texture2D texture)
     {
         texture = null;
 
@@ -199,7 +199,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         return false;
     }
 
-    private void LoadEnemyTextures()
+    void LoadEnemyTextures()
     {
         enemyTextures.Clear();
         LoadEnemyTexturesFromFolder(enemyTextureFolderName);
@@ -215,7 +215,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void LoadEnemyTexturesFromFolder(string folderName)
+    void LoadEnemyTexturesFromFolder(string folderName)
     {
         if (string.IsNullOrWhiteSpace(folderName))
         {
@@ -238,7 +238,7 @@ public sealed class AvoidThemGame : MonoBehaviour
 #endif
     }
 
-    private void AddUniqueTextures(Texture2D[] textures)
+    void AddUniqueTextures(Texture2D[] textures)
     {
         for (var i = 0; i < textures.Length; i++)
         {
@@ -246,7 +246,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void AddUniqueTexture(Texture2D texture)
+    void AddUniqueTexture(Texture2D texture)
     {
         if (texture == null)
         {
@@ -264,7 +264,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         enemyTextures.Add(texture);
     }
 
-    private void CreateBoundaryWall(string wallName, Vector3 position, Vector3 scale)
+    void CreateBoundaryWall(string wallName, Vector3 position, Vector3 scale)
     {
         var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
         wall.name = wallName;
@@ -278,7 +278,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         collider.sharedMaterial = bounceMaterial;
     }
 
-    private void BuildCursor()
+    void BuildCursor()
     {
         var cursorObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         cursorObject.name = "CursorCircle";
@@ -296,7 +296,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void BuildUi()
+    void BuildUi()
     {
         var canvasObject = new GameObject("GameCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         var canvas = canvasObject.GetComponent<Canvas>();
@@ -353,7 +353,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         );
     }
 
-    private GameObject CreateOverlayPanel(Transform parent, string panelName, Color color)
+    GameObject CreateOverlayPanel(Transform parent, string panelName, Color color)
     {
         var panelObject = new GameObject(panelName, typeof(RectTransform), typeof(Image));
         panelObject.transform.SetParent(parent, false);
@@ -370,7 +370,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         return panelObject;
     }
 
-    private Text CreateText(
+    Text CreateText(
         Transform parent,
         string value,
         int size,
@@ -401,7 +401,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         return text;
     }
 
-    private Font ResolveFont()
+    Font ResolveFont()
     {
         var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (font == null)
@@ -412,13 +412,13 @@ public sealed class AvoidThemGame : MonoBehaviour
         return font;
     }
 
-    private void ConfigureCursor(bool gameplayCursor)
+    void ConfigureCursor(bool gameplayCursor)
     {
         Cursor.visible = !gameplayCursor;
         Cursor.lockState = gameplayCursor ? CursorLockMode.Confined : CursorLockMode.None;
     }
 
-    private void UpdateCursorPosition()
+    void UpdateCursorPosition()
     {
         if (gameCamera == null || cursorTransform == null)
         {
@@ -442,7 +442,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         cursorTransform.position = new Vector3(clampedX, 0.06f, clampedZ);
     }
 
-    private void HandleMenuInput()
+    void HandleMenuInput()
     {
         if (state == GameState.StartScreen && IsStartPressedThisFrame())
         {
@@ -456,7 +456,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private bool TryGetPointerScreenPosition(out Vector2 pointerPosition)
+    bool TryGetPointerScreenPosition(out Vector2 pointerPosition)
     {
         var pointer = Pointer.current;
         if (pointer != null)
@@ -486,23 +486,23 @@ public sealed class AvoidThemGame : MonoBehaviour
         return true;
     }
 
-    private bool IsStartPressedThisFrame()
+    bool IsStartPressedThisFrame()
     {
         return IsKeyPressedThisFrame(Key.Space) || WasPrimaryPointerPressedThisFrame();
     }
 
-    private bool IsRestartPressedThisFrame()
+    bool IsRestartPressedThisFrame()
     {
         return IsKeyPressedThisFrame(Key.R) || IsKeyPressedThisFrame(Key.Space) || WasPrimaryPointerPressedThisFrame();
     }
 
-    private bool IsKeyPressedThisFrame(Key key)
+    bool IsKeyPressedThisFrame(Key key)
     {
         var keyboard = Keyboard.current;
         return keyboard != null && keyboard[key].wasPressedThisFrame;
     }
 
-    private bool WasPrimaryPointerPressedThisFrame()
+    bool WasPrimaryPointerPressedThisFrame()
     {
         var pointer = Pointer.current;
         if (pointer != null && pointer.press.wasPressedThisFrame)
@@ -520,7 +520,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         return touchscreen != null && touchscreen.primaryTouch.press.wasPressedThisFrame;
     }
 
-    private void EnterStartScreen()
+    void EnterStartScreen()
     {
         state = GameState.StartScreen;
         elapsed = 0f;
@@ -532,7 +532,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         ClearHazards();
     }
 
-    private void StartRound()
+    void StartRound()
     {
         ClearHazards();
         state = GameState.Playing;
@@ -543,7 +543,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         gameOverPanel.SetActive(false);
     }
 
-    private void EndRound()
+    void EndRound()
     {
         state = GameState.GameOver;
         bestScore = Mathf.Max(bestScore, elapsed);
@@ -552,7 +552,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
-    private void RunSpawner(float deltaTime)
+    void RunSpawner(float deltaTime)
     {
         spawnTimer -= deltaTime;
 
@@ -566,7 +566,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         spawnTimer = currentInterval;
     }
 
-    private void SpawnHazard()
+    void SpawnHazard()
     {
         var side = Random.Range(0, 4);
         var spread = Random.Range(-arenaHalfSize + 0.8f, arenaHalfSize - 0.8f);
@@ -618,7 +618,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         hazards.Add(rb);
     }
 
-    private void ApplyHazardVisuals(Renderer hazardRenderer)
+    void ApplyHazardVisuals(Renderer hazardRenderer)
     {
         var hazardMaterial = hazardRenderer.material;
         if (enemyTextures.Count == 0)
@@ -632,7 +632,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         hazardMaterial.mainTexture = texture;
     }
 
-    private void PurgeDestroyedHazards()
+    void PurgeDestroyedHazards()
     {
         for (var i = hazards.Count - 1; i >= 0; i--)
         {
@@ -643,7 +643,7 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void CheckLoseCondition()
+    void CheckLoseCondition()
     {
         var cursorPosition = cursorTransform.position;
         var hitDistance = cursorRadius + hazardRadius;
@@ -669,12 +669,12 @@ public sealed class AvoidThemGame : MonoBehaviour
         }
     }
 
-    private void UpdateScoreText(float score)
+    void UpdateScoreText(float score)
     {
         scoreText.text = $"Score: {score:0.00}s";
     }
 
-    private void ClearHazards()
+    void ClearHazards()
     {
         for (var i = 0; i < hazards.Count; i++)
         {
